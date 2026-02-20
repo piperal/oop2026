@@ -1,5 +1,6 @@
 package ee.mihkel.veebipood.controller;
 
+import ee.mihkel.veebipood.dto.OrderRowDto;
 import ee.mihkel.veebipood.entity.Order;
 import ee.mihkel.veebipood.entity.OrderRow;
 import ee.mihkel.veebipood.repository.OrderRepository;
@@ -35,7 +36,7 @@ public class OrderController {
     @PostMapping("orders")
     public Order addOrder(@RequestParam Long personId,
                                 @RequestParam(required = false) String parcelMachine,
-                                @RequestBody List<OrderRow> orderRows){
+                                @RequestBody List<OrderRowDto> orderRows){
         return orderService.saveOrder(personId, parcelMachine, orderRows); // siin salvestab
         //return orderRepository.findAll(); // siin on uuenenud seis
     }
