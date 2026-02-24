@@ -6,22 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Entity
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Athlete {
+public class Results {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
-    private int number;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "result_id")
-    private List<Results> results;
+    String fieldName;
+    int result;
 }

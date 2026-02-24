@@ -20,9 +20,6 @@ public class AthleteService {
         if(athlete.getNumber() == 0){
             throw new RuntimeException("Cant add without number");
         }
-        if(athlete.getField().isEmpty()){
-            throw new RuntimeException("Cant add without field");
-        }
 
     }
 }

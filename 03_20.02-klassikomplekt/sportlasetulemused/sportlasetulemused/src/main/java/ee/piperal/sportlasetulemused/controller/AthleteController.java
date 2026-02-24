@@ -1,11 +1,14 @@
 package ee.piperal.sportlasetulemused.controller;
 
 import ee.piperal.sportlasetulemused.entity.Athlete;
+import ee.piperal.sportlasetulemused.entity.Results;
 import ee.piperal.sportlasetulemused.repository.AthleteRepository;
 import ee.piperal.sportlasetulemused.service.AthleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.Result;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,14 +26,16 @@ public class AthleteController {
     }
 
     @GetMapping("results/{id}")
-    public String getResults(@RequestParam Long id){
-        double[] repoResults = athleteRepository.findById(id).orElseThrow().getResults();
+    public double getResults(@RequestParam Long id, String fieldName){
+        List<Results> repoResults = athleteRepository.findById(id).orElseThrow().getResults();
         double result = 0;
-        for (double repoResult : repoResults) {
-            result += repoResult;
+        for (Results repoResult : repoResults) {
+            if(repoResult.getFieldName().equals(fieldName)){
+                result += repoResult.getResult();
+            }
         }
-        return (athleteRepository.findById(id).orElseThrow().getLastName() + ", Spordiala: " + athleteRepository.findById(id).orElseThrow().getField() + ", Tulemus: " +   result);
-    };
+       return result;
+   };
 
     @PostMapping("/add")
     public Athlete addAthlete(@RequestBody Athlete athlete){
@@ -44,15 +49,15 @@ public class AthleteController {
         return athleteRepository.findAll();
     };
 
+
     @PutMapping("/results/update/{id}")
-    public List<Athlete> editAthlete(@RequestBody Athlete athlete){
-        if(athlete.getId() == null){
-            throw new RuntimeException("Cannot edit without id");
-        }
-        if(!athleteRepository.existsById(athlete.getId())){
-            throw new RuntimeException("Athlete with this id does not exist");
-        }
-        athleteRepository.save(athlete);
-        return athleteRepository.findAll();
-    }
-}
+    public void editAthlete(@PathVariable Long id, Results result){
+      Athlete athlete = athleteRepository.findById(id).orElseThrow();
+        List<Results> newResults = athlete.getResults();
+        newResults.add(result);
+       athleteRepository.findById(id).map(results ->{results.setResults(newResults);
+           return athleteRepository.save(athlete);
+
+
+   });
+}}
