@@ -21,7 +21,6 @@ public class Athlete {
     private String firstName;
     private String lastName;
     private int number;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "result_id")
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Results> results;
 }
