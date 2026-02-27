@@ -1,6 +1,10 @@
 package ee.mihkel.rentalstore.entity;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,14 +15,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Film {
+public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private FilmType type; // Enum - kindlaksmääratud väärtuste hulgast saan valida
-    private int days; // mitu päeva on renditud. 0 - available
+    private double initialFee;
+    private double lateFee;
 
-    @ManyToOne
-    private Rental rental;
+
 }
