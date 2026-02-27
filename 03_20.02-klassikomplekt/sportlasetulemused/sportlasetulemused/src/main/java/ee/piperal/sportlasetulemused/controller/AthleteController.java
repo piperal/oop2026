@@ -26,7 +26,7 @@ public class AthleteController {
     }
 
     @GetMapping("results/{id}")
-    public double getResults(@RequestParam Long id, String fieldName){
+    public String getResults(@RequestParam Long id, String fieldName){
         List<Results> repoResults = athleteRepository.findById(id).orElseThrow().getResults();
         double result = 0;
         for (Results repoResult : repoResults) {
@@ -34,7 +34,7 @@ public class AthleteController {
                 result += repoResult.getResult();
             }
         }
-       return result;
+       return("Field: " + fieldName + ", Result: " + result);
    };
 
     @PostMapping("/add")
@@ -55,7 +55,7 @@ public class AthleteController {
       Athlete athlete = athleteRepository.findById(id).orElseThrow();
         List<Results> newResults = athlete.getResults();
         newResults.add(result);
-       athleteRepository.findById(id).map(results ->{results.setResults(newResults);
+        athleteRepository.findById(id).map(results ->{results.setResults(newResults);
            return athleteRepository.save(athlete);
 
 
