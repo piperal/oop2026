@@ -53,14 +53,14 @@ public class RentalController {
                     if (filmRentalDto.days() <= 3) {
                         sum += basicPrice;
                     } else {
-                        sum += basicPrice + basicPrice * filmRentalDto.days() - 3;
+                        sum += basicPrice + basicPrice * (filmRentalDto.days() - 3);
                     }
                 }
                 case OLD -> {
                     if (filmRentalDto.days() <= 5) {
                         sum += basicPrice;
                     } else {
-                        sum += basicPrice + basicPrice * filmRentalDto.days() - 5;
+                        sum += basicPrice + basicPrice * (filmRentalDto.days() - 5);
                     }
                 }
             }
@@ -73,7 +73,20 @@ public class RentalController {
 
     // DTO ---> mis film (ID), mitu päeva tegelikult rendis oli
     @PostMapping("end-rental")
-    public Rental endRental(@RequestBody List<FilmRentalDto> filmRentalDtos) {
-        return new Rental();
+    public double endRental(@RequestBody List<FilmRentalDto> filmRentalDtos) {
+
+        double sum = 0;
+        for (FilmRentalDto filmRentalDto : filmRentalDtos) {
+            Film dbFilm = filmRepository.findById(filmRentalDto.filmId()).orElseThrow();
+            Rental rental = dbFilm.getRental();
+            // switch case --> filmi_summa arvutamine + summale juurde liitmine
+            rental.setLateFee(rental.getLateFee() + FILMI_SUMMA); // <-- võib olla switchi sees
+            rentalRepository.save(rental);
+
+            dbFilm.setRental(null);
+            dbFilm.setDays(0);
+            filmRepository.save(dbFilm);
+        }
+        return sum; // maksmisele lähev summa (võib tulla erinevatest rentalitest)
     }
 }
