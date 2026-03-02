@@ -5,6 +5,7 @@ import ee.piperal.movie_rental.entity.Movie;
 import ee.piperal.movie_rental.entity.Person;
 import ee.piperal.movie_rental.repository.MovieInterface;
 import ee.piperal.movie_rental.repository.PersonInterface;
+import ee.piperal.movie_rental.service.MovieService;
 import ee.piperal.movie_rental.service.RentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ public class RentController {
 
     @Autowired
     RentService personService;
+
+    @Autowired
+    MovieService movieService;
 
     @Autowired
     MovieInterface movieInterface;
@@ -40,19 +44,27 @@ public class RentController {
     }
 
     @PutMapping("/customer/rent/{id}")
-    public void updateCustomer(@PathVariable Long id, Long movieId, int days){
+    public void updateCustomer(@PathVariable Long id, @RequestBody List<Long> movieIds, int days){
 
         Person person = personInterface.findById(id).orElseThrow();
         personService.isRenting(person);
 
         List<Movie> rentedMovies = person.getMoviesRented();
-        rentedMovies.add(movieInterface.findById(movieId).orElseThrow());
+        for (Long movieId : movieIds) {
+            rentedMovies.add(movieInterface.findById(movieId).orElseThrow());
+        }
         double total = 0;
         person.setMoviesRented(rentedMovies);
         person.setDaysRented(days);
         person.setRenting(1);
 
+        //Võtab "movieIDs" list ja lisab iga filmi mis on listis, kuna iga klient laentuada saab ainult ükskord
         for(Movie movie : rentedMovies){
+
+        //Pidin panema siia mitte serivcisse, kuna muidu ei luba Id-ga otsida
+            if(movie.getMovieRented() != 0){
+                throw new RuntimeException("One of the movies is already being rented");
+            }
             String movieType = movie.getMovieType();
             double moviePrice = movie.getMoviePrice();
             movie.setMovieRented(1);
@@ -121,10 +133,14 @@ public class RentController {
         person.setTotal(person.getRentCharge() + lateCharge);
         personInterface.save(person);
 }
-
+    //See on rohkem debug mõttes siin, sellega saab kasutaja kõik makstud ja filmid tagastatud
     @PutMapping("/customer/pay/{id}")
     public void customerPay(@PathVariable Long id){
         Person person = personInterface.findById(id).orElseThrow();
+        List<Movie> rentedMovies = person.getMoviesRented();
+        for(Movie rentedMovie : rentedMovies){
+            rentedMovie.setMovieRented(0);
+        };
         person.setMoviesRented(null);
         person.setTotal(0);
         person.setRentCharge(0);

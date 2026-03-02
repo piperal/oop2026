@@ -14,7 +14,7 @@ public class MovieService {
             throw new RuntimeException("Can't add with id");
         }
         if(movie.getMoviePrice() != 0){
-            throw new RuntimeException("Don't set price here");
+            throw new RuntimeException("Price has to be 0");
         }
         if(Objects.equals(movie.getMovieType(), "")){
             throw new RuntimeException("Need to specify movie type");
