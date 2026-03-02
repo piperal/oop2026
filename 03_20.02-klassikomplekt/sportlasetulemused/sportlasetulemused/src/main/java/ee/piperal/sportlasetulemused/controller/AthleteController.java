@@ -7,8 +7,6 @@ import ee.piperal.sportlasetulemused.service.AthleteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.transform.Result;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
