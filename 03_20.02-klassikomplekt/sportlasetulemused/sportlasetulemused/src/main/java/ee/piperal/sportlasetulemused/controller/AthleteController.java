@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "*")
 @RestController
 public class AthleteController {
 
@@ -36,9 +36,10 @@ public class AthleteController {
    };
 
     @PostMapping("/add")
-    public Athlete addAthlete(@RequestBody Athlete athlete){
+    public List<Athlete> addAthlete(@RequestBody Athlete athlete){
         athleteService.validator(athlete);
-        return athleteRepository.save(athlete);
+        athleteRepository.save(athlete);
+        return athleteRepository.findAll();
     }
 
     @DeleteMapping("/delete/{id}")
@@ -49,13 +50,14 @@ public class AthleteController {
 
 
     @PutMapping("/results/update/{id}")
-    public void editAthlete(@PathVariable Long id, Results result){
+    public List<Athlete> editAthlete(@PathVariable Long id, Results result){
       Athlete athlete = athleteRepository.findById(id).orElseThrow();
         List<Results> newResults = athlete.getResults();
         newResults.add(result);
         athleteRepository.findById(id).map(results ->{results.setResults(newResults);
-           return athleteRepository.save(athlete);
+            return null;
+        });
+        athleteRepository.save(athlete);
+        return athleteRepository.findAll();
 
-
-   });
-}}
+    }}
