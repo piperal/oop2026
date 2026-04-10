@@ -4,7 +4,10 @@ import ee.piperal.sportlasetulemused.entity.Athlete;
 import ee.piperal.sportlasetulemused.entity.Results;
 import ee.piperal.sportlasetulemused.repository.AthleteRepository;
 import ee.piperal.sportlasetulemused.service.AthleteService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +21,15 @@ public class AthleteController {
     @Autowired
     private AthleteService athleteService;
 
-    @GetMapping("all")
-    public List<Athlete> getAll(){
+    @GetMapping("all/admin")
+    public List<Athlete> getAllAdmin(){
         return athleteRepository.findAll();
+    }
+
+    @GetMapping("all")
+    public Page<@NonNull Athlete> getAll(Pageable pageable){
+
+        return athleteRepository.findAll(pageable);
     }
 
     @GetMapping("results/{id}")
