@@ -2,7 +2,10 @@ package ee.mihkel.veebipood.controller;
 
 import ee.mihkel.veebipood.entity.Product;
 import ee.mihkel.veebipood.repository.ProductRepository;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;  // !!!!!!!!!!!!!
+import org.springframework.data.domain.Pageable; // !!!!!!!!!!!!!
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,8 +31,14 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    // localhost:8080/products?page=0&size=4&sort=price,asc
     @GetMapping("products")
-    public List<Product> getProducts(){
+    public Page<@NonNull Product> getProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+    @GetMapping("products/admin")
+    public List<Product> getAdminProducts(){
         return productRepository.findAll();
     }
 
