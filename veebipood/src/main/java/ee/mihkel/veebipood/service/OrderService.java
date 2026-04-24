@@ -44,9 +44,9 @@ public class OrderService {
         body.setNonce("165784a" + ZonedDateTime.now() + Math.random()); // turvaelement, et ei läheks topeltpäring
         body.setTimestamp(ZonedDateTime.now().toString()); // turvaelement. pluss miinus 5 minutit
         body.setAmount(sum); // max 7000 eurot on default
-        body.setOrder_reference("ghjk" + orderId); // kui on makstud, siis teist korda maksma minna ei saa
+        body.setOrder_reference("mihkel" + orderId); // kui on makstud, siis teist korda maksma minna ei saa
         body.setCustomer_url("http://err.ee"); // kuhu tagasi suunatakse. localhosti ei saa
-        body.setApi_username(""); // turvaelement. Headeris olemas. aga peab ühtima sellega mis on headeris
+        body.setApi_username("e36eb40f5ec87fa2"); // turvaelement. Headeris olemas. aga peab ühtima sellega mis on headeris
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth("e36eb40f5ec87fa2", "7b91a3b9e1b74524c2e9fc282f8ac8cd");

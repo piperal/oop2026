@@ -50,15 +50,16 @@ public class OrderController {
     // person --> autentimise tokenist. parcelmachine --> Omnivast
     // localhost:8080/orders?personId=1
     @PostMapping("orders")
-    public Order addOrder(@RequestParam Long personId,
+    public PaymentUrl addOrder(@RequestParam Long personId,
                                 @RequestParam(required = false) String parcelMachine,
                                 @RequestBody List<OrderRowDto> orderRows){
-        return orderService.saveOrder(personId, parcelMachine, orderRows); // siin salvestab
+        Order order = orderService.saveOrder(personId, parcelMachine, orderRows); // siin salvestab
+        return orderService.makePayment(order.getId(), order.getTotal());
         //return orderRepository.findAll(); // siin on uuenenud seis
     }
 
-    @PostMapping("pay")
-    public PaymentUrl makePayment(@RequestParam Long orderId, double sum) {
-        return orderService.makePayment(orderId, sum);
-    }
+    //@PostMapping("pay")
+    //public PaymentUrl makePayment(@RequestParam Long orderId, double sum) {
+    //    return orderService.makePayment(orderId, sum);
+    //}
 }
