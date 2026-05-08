@@ -8,6 +8,7 @@ import BookDetailPage from "./component/BookDetailsPage";
 import AddMemberPage from "./component/AddMemberPage";
 import BorrowBook from "./component/BorrowBook";
 import SearchBook from "./component/SearchBook";
+import ApiBooks from "./component/ApiBooks";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/add-members" element={<AddMemberPage/>}/>
         <Route path="/book-borrow" element={<BorrowBook/>}/>
         <Route path="/search" element={<SearchBook />} />
+        <Route path="/api" element={<ApiBooks/>}></Route>
       </Routes>
     </Router>
 

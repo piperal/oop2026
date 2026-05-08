@@ -8,16 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.NonNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.library.model.Book;
@@ -55,14 +52,15 @@ public class BookController {
 
     // ✅ Get all books
     @GetMapping
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public Page<@NonNull Book> getAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable);
     }
+
     @GetMapping("/search")
     public List<Book> searchBooks(@RequestParam("q") String keyword) {
         return bookRepository.searchBooks(keyword);
     }
-    
+
     // ✅ Get single book (with borrow info)
     @GetMapping("/{id}")
     public ResponseEntity<?> getBookById(@PathVariable int id) {
@@ -86,6 +84,13 @@ public class BookController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("apibooks")
+    public String getBooks() throws IOException {
+        String url = "https://holy-bible-api.com/bibles";
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.exchange(url, HttpMethod.GET, null, String.class).getBody();
+    }
+
     // ✅ Add book (with optional image)
     @PostMapping(consumes = {"multipart/form-data"})
     public String addBook(@RequestParam String title,
@@ -95,15 +100,12 @@ public class BookController {
                           @RequestParam(required = false) String shelf,
                           @RequestParam(required = false) String description,
                           @RequestParam(required = false) MultipartFile image) {
-        Book book = new Book();
-        book.setTitle(title);
-        book.setShelf(shelf);
-        book.setDescription(description);
+        return "Book added successfully!";
+    }
 
-        authorId = setAuthorPublisherCategory(book, authorId, publisherId, categoryId);
-        handleImageUpload(book, image);
-
-        bookRepository.save(book);
+    @PostMapping("list")
+    public String addAsList(@RequestBody List<Book> books) {
+        bookRepository.saveAll(books);
         return "Book added successfully!";
     }
 

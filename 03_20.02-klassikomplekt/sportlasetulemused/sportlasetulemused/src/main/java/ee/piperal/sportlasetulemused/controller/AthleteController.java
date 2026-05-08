@@ -28,7 +28,6 @@ public class AthleteController {
 
     @GetMapping("all")
     public Page<@NonNull Athlete> getAll(Pageable pageable){
-
         return athleteRepository.findAll(pageable);
     }
 
@@ -56,7 +55,6 @@ public class AthleteController {
         athleteRepository.deleteById(id);
         return athleteRepository.findAll();
     };
-
 
     @PutMapping("/results/update/{id}")
     public List<Athlete> editAthlete(@PathVariable Long id, Results result){

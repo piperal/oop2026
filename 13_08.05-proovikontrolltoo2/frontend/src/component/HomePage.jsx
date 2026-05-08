@@ -5,6 +5,9 @@ import "./HomePage.css"; // your custom CSS
 
 function HomePage() {
   const [books, setBooks] = useState([]);
+  const [totalPages, setTotalPages] = useState();
+  const [page, setPage] = useState(0);
+  const size = 4
 
   useEffect(() => {
     async function fetchBooks() {
@@ -23,7 +26,21 @@ function HomePage() {
     fetchBooks();
   }, []);
 
-  return (
+  useEffect(() => {
+    fetch(`http://localhost:8081/api/books?page=${page}&size=${size}`)
+      .then(res => res.json())
+      .then(json => {
+        console.log(json)
+        setBooks(json.content);
+        setTotalPages(json.totalPages)
+      })
+  }, [page, size])
+
+
+  return (<>
+    <button disabled={page === 0} onClick={() => { setPage(page - 1) }}>Previous</button>
+    <span>{page + 1}/ {totalPages}</span>
+    <button disabled={page + 1 === totalPages} onClick={() => { setPage(page + 1) }}>Next</button>
     <div
       className="container mt-4"
       style={{
@@ -96,7 +113,7 @@ function HomePage() {
                 </p>
 
                 {/* Shelf */}
-                <p style={{ color: "#000000ff", fontSize: "0.8rem", fontWeight: "bold"}}>
+                <p style={{ color: "#000000ff", fontSize: "0.8rem", fontWeight: "bold" }}>
                   Shelf: {book.shelf || "N/A"}
                 </p>
 
@@ -106,6 +123,7 @@ function HomePage() {
         </div>
       )}
     </div>
+  </>
   );
 }
 
