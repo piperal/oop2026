@@ -1,0 +1,72 @@
+package ee.piperal.sportlasetulemused.controller;
+
+import ee.piperal.sportlasetulemused.entity.Athlete;
+import ee.piperal.sportlasetulemused.entity.Results;
+import ee.piperal.sportlasetulemused.repository.AthleteRepository;
+import ee.piperal.sportlasetulemused.service.AthleteService;
+import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+@CrossOrigin(origins = "*")
+@RestController
+public class AthleteController {
+
+    @Autowired
+    private AthleteRepository athleteRepository;
+
+    @Autowired
+    private AthleteService athleteService;
+
+    @GetMapping("all/admin")
+    public List<Athlete> getAllAdmin(){
+        return athleteRepository.findAll();
+    }
+
+    @GetMapping("all")
+    public Page<@NonNull Athlete> getAll(Pageable pageable){
+
+        return athleteRepository.findAll(pageable);
+    }
+
+    @GetMapping("results/{id}")
+    public String getResults(@RequestParam Long id, String fieldName){
+        List<Results> repoResults = athleteRepository.findById(id).orElseThrow().getResults();
+        double result = 0;
+        for (Results repoResult : repoResults) {
+            if(repoResult.getFieldName().equals(fieldName)){
+                result += repoResult.getResult();
+            }
+        }
+       return("Field: " + fieldName + ", Result: " + result);
+   };
+
+    @PostMapping("/add")
+    public List<Athlete> addAthlete(@RequestBody Athlete athlete){
+        athleteService.validator(athlete);
+        athleteRepository.save(athlete);
+        return athleteRepository.findAll();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public List<Athlete> delAthlete(@PathVariable Long id){
+        athleteRepository.deleteById(id);
+        return athleteRepository.findAll();
+    };
+
+
+    @PutMapping("/results/update/{id}")
+    public List<Athlete> editAthlete(@PathVariable Long id, Results result){
+      Athlete athlete = athleteRepository.findById(id).orElseThrow();
+        List<Results> newResults = athlete.getResults();
+        newResults.add(result);
+        athleteRepository.findById(id).map(results ->{results.setResults(newResults);
+            return null;
+        });
+        athleteRepository.save(athlete);
+        return athleteRepository.findAll();
+
+    }}
